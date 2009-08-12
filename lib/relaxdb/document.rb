@@ -3,6 +3,7 @@ module RelaxDB
   class Document
     
     include RelaxDB::Validators
+    include RelaxDB::Utils
     
     # Used to store validation messages
     attr_accessor :errors
@@ -372,7 +373,7 @@ module RelaxDB
       @has_many_rels << relationship
       
       if RelaxDB.create_views?
-        target_class = opts[:class]
+        target_class = (opts[:class] || singularize(relationship)).to_s
         relationship_as_viewed_by_target = (opts[:known_as] || self.name.snake_case).to_s
         ViewCreator.has_n(self.name, relationship, target_class, relationship_as_viewed_by_target).save
       end      
